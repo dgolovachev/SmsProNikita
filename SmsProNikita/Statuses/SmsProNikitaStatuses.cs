@@ -2,6 +2,9 @@
 
 namespace SmsProNikita.Statuses
 {
+    /// <summary>
+    /// Класс для работы со статусами
+    /// </summary>
     public static class SmsProNikitaStatuses
     {
         /// <summary>

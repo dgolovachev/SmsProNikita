@@ -11,7 +11,10 @@ using SmsProNikita.Statuses;
 
 namespace SmsProNikita
 {
-    public class SmsProNikita
+    /// <summary>
+    /// Класс клиент для работы с сервисом рассылки смс smspro.nikita.kg
+    /// </summary>
+    public class SmsProNikitaClient
     {
         private const string SendSmsApiUrl = @"http://smspro.nikita.kg/api/message";
         private const string DeliveryReportApiUrl = @"http://smspro.nikita.kg/api/dr";
@@ -22,24 +25,24 @@ namespace SmsProNikita
         private readonly string _sender;
 
         /// <summary>
-        /// Конструктор с настройками
+        /// Инициализирует новый экземпляр класса используя экземпляр класса настроек SmsProNikitaConfig
         /// </summary>
-        /// <param name="smsProNikitaConfig">Настройки сервиса</param>
-        public SmsProNikita(SmsProNikitaConfig smsProNikitaConfig)
+        /// <param name="smsProNikitaConfig">Экземпляр класса настроек</param>
+        public SmsProNikitaClient(SmsProNikitaConfig smsProNikitaConfig)
         {
             if (smsProNikitaConfig == null) throw new ArgumentException("argument is null", "smsProNikitaConfig");
             _login = smsProNikitaConfig.Login;
             _password = smsProNikitaConfig.Password;
             _sender = smsProNikitaConfig.Sender;
         }
-        
+
         /// <summary>
-        ///  Конструктор с настройками
+        ///  Инициализирует новый экземпляр класса используя login, password , sender
         /// </summary>
         /// <param name="login">Логин выдаваемый при создании аккаунта</param>
         /// <param name="password">Пароль </param>
         /// <param name="sender">Имя отправителя, отображаемое в телефоне получателя. Может состоять либо из 11 латинских букв, цифр и знаков точка и тире, либо из 14 цифр.</param>
-        public SmsProNikita(string login, string password, string sender)
+        public SmsProNikitaClient(string login, string password, string sender)
         {
             if (string.IsNullOrWhiteSpace(login)) throw new ArgumentException("argument is null or empty", "login");
             if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("argument is null or empty", "password");
@@ -74,7 +77,7 @@ namespace SmsProNikita
         /// <summary>
         /// Отправляет смс группе номеров
         /// </summary>
-        /// <param name="phone">Номера телефонов на который необходимо отправить сообщение. Формат телефона 996555123456 либо +996555123456. Максимальное число получателей в одном пакете – 50 номеров.</param>
+        /// <param name="phones">Номера телефонов на который необходимо отправить сообщение. Формат телефона 996555123456 либо +996555123456. Максимальное число получателей в одном пакете – 50 номеров.</param>
         /// <param name="text">Текст сообщения. Максимальная длина 800 символов. Сообщение при необходимости будет разбито на несколько SMS, каждое из которых тарифицируется отдельно. Размер одного SMS – 160 символов в латинице или 70 символов в кириллице. При разбивке сообщения на части в каждую часть добавляется заголовок для объединения частей в одно сообщение на телефоне получателя, поэтому в длинных сообщениях максимальная длина одной части становится 67 символов для кириллицы и 153 для латинских символов. Формат UTF-8</param>
         /// <param name="id">Id сообщения – любой набор латинских букв и цифр длиной до 12 знаков. id каждой отправки должен быть уникальным. Если у двух отправок указан одинаковый id, то вторая по очереди отправка будет заблокирована. Этот параметр необязателен – если отсутствует, то сгенерируется автоматически</param>
         /// <param name="dateTimeUTC">Время отправки. Этот параметр необязателен – если отсутствует, то сообщение отправляется немедленно</param>

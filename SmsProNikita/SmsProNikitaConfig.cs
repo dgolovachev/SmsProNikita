@@ -2,12 +2,18 @@
 
 namespace SmsProNikita
 {
+    /// <summary>
+    /// Класс настроек клиента SmsProNikitaClient
+    /// </summary>
     public class SmsProNikitaConfig
     {
         private string _login;
         private string _password;
         private string _sender;
 
+        /// <summary>
+        /// Логин
+        /// </summary>
         public string Login
         {
             get => _login;
@@ -18,6 +24,9 @@ namespace SmsProNikita
             }
         }
 
+        /// <summary>
+        /// Пароль
+        /// </summary>
         public string Password
         {
             get => _password;
@@ -28,6 +37,9 @@ namespace SmsProNikita
             }
         }
 
+        /// <summary>
+        /// Имя отправителя
+        /// </summary>
         public string Sender
         {
             get => _sender;
@@ -39,7 +51,7 @@ namespace SmsProNikita
         }
 
         /// <summary>
-        /// 
+        /// Инициализирует новый экземпляр класса настроек
         /// </summary>
         /// <param name="login">Логин выдаваемый при создании аккаунта </param>
         /// <param name="password">Пароль </param>
