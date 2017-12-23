@@ -1,7 +1,7 @@
 ﻿namespace SmsProNikita.Types
 {
     /// <summary>
-    /// Ответ сервиса smspro.nikita.kg на запрос информации о состоянии счета и аккаунта
+    /// Ответ сервиса на запрос информации о состоянии счета и аккаунта
     /// </summary>
     public class AccountInfo
     {
@@ -22,7 +22,7 @@
         /// </summary>
         public double Account { get; set; }
         /// <summary>
-        /// Стоимость одного SMS-сообщения в валюте счета. 
+        /// Стоимость одного SMS-сообщения в валюте счета
         /// </summary>
         public double SmsPrice { get; set; }
     }

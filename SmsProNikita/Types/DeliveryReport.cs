@@ -1,7 +1,7 @@
 ﻿namespace SmsProNikita.Types
 {
     /// <summary>
-    ///  Ответ на запрос отчета о доставке 
+    ///  Ответ сервиса на запрос отчета о доставке 
     /// </summary>
     public class DeliveryReport
     {

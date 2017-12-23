@@ -1,12 +1,12 @@
 ﻿namespace SmsProNikita.Types
 {
     /// <summary>
-    /// Ответ сервиса smspro.nikita.kg на запрос отправки смс
+    /// Ответ сервиса на запрос отправки смс
     /// </summary>
     public class SendSmsResponse
     {
         /// <summary>
-        /// Id запроса, который был передан партнером в данном запросе
+        /// Id запроса
         /// </summary>
         public string Id { get; set; }
         /// <summary>
@@ -22,7 +22,7 @@
         /// </summary>
         public int Phones { get; set; }
         /// <summary>
-        /// Число частей SMS, на которое разделилось отправляемое сообщение.
+        /// Число частей SMS, на которое разделилось отправляемое сообщение
         /// </summary>
         public int SmsPart { get; set; }
         /// <summary>

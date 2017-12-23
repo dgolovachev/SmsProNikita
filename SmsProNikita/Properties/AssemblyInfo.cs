@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // набора атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("SmsProNikita")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Библиотека для работы с сервисом smspro.nikita.kg")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("SmsProNikita")]
