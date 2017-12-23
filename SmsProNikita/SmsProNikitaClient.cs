@@ -62,7 +62,7 @@ namespace SmsProNikita
         /// <param name="text">Текст сообщения. Максимальная длина 800 символов. Сообщение при необходимости будет разбито на несколько SMS, каждое из которых тарифицируется отдельно. Размер одного SMS – 160 символов в латинице или 70 символов в кириллице. При разбивке сообщения на части в каждую часть добавляется заголовок для объединения частей в одно сообщение на телефоне получателя, поэтому в длинных сообщениях максимальная длина одной части становится 67 символов для кириллицы и 153 для латинских символов. Формат UTF-8</param>
         /// <param name="id">Id сообщения – любой набор латинских букв и цифр длиной до 12 знаков. id каждой отправки должен быть уникальным. Если у двух отправок указан одинаковый id, то вторая по очереди отправка будет заблокирована. Этот параметр необязателен – если отсутствует, то сгенерируется автоматически</param>
         /// <param name="dateTimeUTC">Время отправки. Этот параметр необязателен – если отсутствует, то сообщение отправляется немедленно</param>
-        /// <returns></returns>
+        /// <returns>Возвращает ответ сервиса приведенный к классу SendSmsResponse</returns>
         public SendSmsResponse SendSms(string phone, string text, string id = null, DateTime dateTimeUTC = default(DateTime))
         {
             if (string.IsNullOrWhiteSpace(phone)) throw new ArgumentException("argument is null or empty", "phone");
@@ -81,7 +81,7 @@ namespace SmsProNikita
         /// <param name="text">Текст сообщения. Максимальная длина 800 символов. Сообщение при необходимости будет разбито на несколько SMS, каждое из которых тарифицируется отдельно. Размер одного SMS – 160 символов в латинице или 70 символов в кириллице. При разбивке сообщения на части в каждую часть добавляется заголовок для объединения частей в одно сообщение на телефоне получателя, поэтому в длинных сообщениях максимальная длина одной части становится 67 символов для кириллицы и 153 для латинских символов. Формат UTF-8</param>
         /// <param name="id">Id сообщения – любой набор латинских букв и цифр длиной до 12 знаков. id каждой отправки должен быть уникальным. Если у двух отправок указан одинаковый id, то вторая по очереди отправка будет заблокирована. Этот параметр необязателен – если отсутствует, то сгенерируется автоматически</param>
         /// <param name="dateTimeUTC">Время отправки. Этот параметр необязателен – если отсутствует, то сообщение отправляется немедленно</param>
-        /// <returns></returns>
+        /// <returns>Возвращает ответ сервиса приведенный к классу SendSmsResponse</returns>
         public SendSmsResponse SendSms(string[] phones, string text, string id = null, DateTime dateTimeUTC = default(DateTime))
         {
             if (phones == null || phones.Length == 0 || phones.Length > 50) throw new ArgumentException("count phones must be greate than 0 and less tnan 51", "phones");
@@ -99,7 +99,7 @@ namespace SmsProNikita
         /// </summary>
         /// <param name="id">id сообщения в котором производилась отправка на определенный номер телефона</param>
         /// <param name="phone">Номер телефона. Необязательное поле – если не указано, то возвращается отчет о всех телефонах транзакции</param>
-        /// <returns>Возвращает отчет </returns>
+        /// <returns>Возвращает отчет преденный к классу DeliveryReport</returns>
         public DeliveryReport GetDeliveryReport(string id, string phone = null)
         {
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("argument is null or empty", "id");
@@ -110,7 +110,7 @@ namespace SmsProNikita
         /// <summary>
         /// Запрос информации о состоянии счета и аккаунта
         /// </summary>
-        /// <returns></returns>
+        /// <returns> Возвращает информацию о состоянии счета и аккаунта приведенную к классу AccountInfo</returns>
         public AccountInfo GetAccountInfo()
         {
             var xml = CreateAccountInfoXml();
@@ -125,7 +125,7 @@ namespace SmsProNikita
         /// Парсит ответ запроса отправки смс и мапит к классу SendSmsResponse
         /// </summary>
         /// <param name="responseXml">XML ответ запроса отправки смс</param>
-        /// <returns></returns>
+        /// <returns>Возвращает ответ приведенный к классу SendSmsResponse</returns>
         public SendSmsResponse ParseSendSmsResponse(string responseXml)
         {
             try
@@ -154,7 +154,7 @@ namespace SmsProNikita
         /// Парсит ответ запроса отчета и мапит к классу DeliveryReport
         /// </summary>
         /// <param name="deliveryReportXml">XML ответ запроса отчета</param>
-        /// <returns></returns>
+        /// <returns>Возвращает ответ приведенный к классу DeliveryReport</returns>
         public DeliveryReport ParseDeliveryReportResponse(string deliveryReportXml)
         {
             try
@@ -208,7 +208,7 @@ namespace SmsProNikita
         /// Парсит ответ запроса информации о состоянии счета и аккаунта
         /// </summary>
         /// <param name="accountInfoXml">XML ответ запроса информации о состоянии счета и аккаунта</param>
-        /// <returns></returns>
+        /// <returns>Возвращает ответ приведенный к классу AccountInfo</returns>
         public AccountInfo ParseAccountInfoResponse(string accountInfoXml)
         {
             try
