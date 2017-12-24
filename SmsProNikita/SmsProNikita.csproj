@@ -43,7 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\HttpException.cs" />
+    <Compile Include="Exceptions\ParseResponseException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\HttpService.cs" />
+    <Compile Include="Services\IHttpService.cs" />
     <Compile Include="SmsProNikitaClient.cs" />
     <Compile Include="SmsProNikitaConfig.cs" />
     <Compile Include="Statuses\SmsProNikitaStatuses.cs" />
@@ -51,6 +55,8 @@
     <Compile Include="Types\DeliveryReport.cs" />
     <Compile Include="Types\ReportPhone.cs" />
     <Compile Include="Types\SendSmsResponse.cs" />
+    <Compile Include="Utils\IResponseParser.cs" />
+    <Compile Include="Utils\ResponseParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -51,11 +51,18 @@ namespace SmsProNikita
         }
 
         /// <summary>
-        /// Инициализирует новый экземпляр класса настроек
+        /// Инициализирует новый экземпляр <see cref="SmsProNikitaConfig"/> класса.
         /// </summary>
-        /// <param name="login">Логин выдаваемый при создании аккаунта </param>
-        /// <param name="password">Пароль </param>
+        /// <param name="login">Логин выдаваемый при создании аккаунта</param>
+        /// <param name="password">Пароль</param>
         /// <param name="sender">Имя отправителя, отображаемое в телефоне получателя. Может состоять либо из 11 латинских букв, цифр и знаков точка и тире, либо из 14 цифр.</param>
+        /// <exception cref="ArgumentException">
+        /// Логин не может быть пустым - login
+        /// или
+        /// Пароль не может быть пустым - password
+        /// или
+        /// Имя отправителя не может быть пустым - sender
+        /// </exception>
         public SmsProNikitaConfig(string login, string password, string sender)
         {
             if (string.IsNullOrWhiteSpace(login)) throw new ArgumentException("argument is null or empty", "login");
