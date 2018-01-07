@@ -1,10 +1,16 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using SmsProNikita.Exceptions;
 
 namespace SmsProNikita.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="SmsProNikita.Services.IHttpService" />
+    /// <seealso cref="System.IDisposable" />
     public class HttpService : IHttpService, IDisposable
     {
         private readonly HttpClient _httpClient;
@@ -12,11 +18,25 @@ namespace SmsProNikita.Services
         /// <summary>
         /// Инициализирует новый экземпляр <see cref="HttpService"/> класса.
         /// </summary>
-        public HttpService()
+        /// <param name="httpClient">The HTTP client.</param>
+        public HttpService(HttpClient httpClient = null)
         {
-            _httpClient = new HttpClient();
+            _httpClient = httpClient ?? new HttpClient();
         }
 
+        /// <summary>
+        /// Инициализирует новый экземпляр <see cref="HttpService"/> класса.
+        /// </summary>
+        /// <param name="webProxy">The web proxy.</param>
+        public HttpService(IWebProxy webProxy)
+        {
+            var httpClientHander = new HttpClientHandler
+            {
+                Proxy = webProxy,
+                UseProxy = true
+            };
+            _httpClient = new HttpClient(httpClientHander);
+        }
 
         /// <summary>
         /// Отправляет запрос на URL с содержищимся в нем XML.
@@ -29,7 +49,7 @@ namespace SmsProNikita.Services
         /// или
         /// xml не может быть пустым - xml
         /// </exception>
-        /// <exception cref="SmsProNikita.Exceptions.HttpException">Ошибка отправки запроса в HttpService</exception>
+        /// <exception cref="HttpException">Ошибка отправки запроса в HttpService</exception>
         public string Request(string url, string xml)
         {
             if(string.IsNullOrWhiteSpace(url)) throw new ArgumentException("url не может быть пустым","url");

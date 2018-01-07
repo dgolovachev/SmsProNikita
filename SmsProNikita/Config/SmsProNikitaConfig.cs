@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SmsProNikita
+namespace SmsProNikita.Config
 {
     /// <summary>
     /// Класс настроек клиента SmsProNikitaClient

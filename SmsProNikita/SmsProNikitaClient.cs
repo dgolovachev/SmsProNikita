@@ -1,8 +1,12 @@
 ﻿using System;
-using System.Xml.Linq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using SmsProNikita.Config;
 using SmsProNikita.Services;
 using SmsProNikita.Types;
 using SmsProNikita.Utils;
+using SmsProNikita.Xml;
 
 namespace SmsProNikita
 {
@@ -16,24 +20,20 @@ namespace SmsProNikita
         private const string AccountInfoApiUrl = @"http://smspro.nikita.kg/api/info ";
 
         private readonly IHttpService _httpService;
-        private readonly string _login;
-        private readonly string _password;
-        private readonly string _sender;
+        private readonly SmsProNikitaConfig _config;
+        private readonly XmlCreator _xmlCreator;
 
         /// <summary>
         /// Инициализирует новый экземпляр <see cref="SmsProNikitaClient"/> класса.
         /// </summary>
         /// <param name="smsProNikitaConfig">SmsProNikitaConfig</param>
+        /// <param name="webProxy">webProxy</param>
         /// <exception cref="ArgumentNullException">smsProNikitaConfig</exception>
-        public SmsProNikitaClient(SmsProNikitaConfig smsProNikitaConfig)
+        public SmsProNikitaClient(SmsProNikitaConfig smsProNikitaConfig, IWebProxy webProxy = null)
         {
-            if (smsProNikitaConfig == null) throw new ArgumentNullException("smsProNikitaConfig");
-
-            _login = smsProNikitaConfig.Login;
-            _password = smsProNikitaConfig.Password;
-            _sender = smsProNikitaConfig.Sender;
-
-            _httpService = new HttpService();
+            _config = smsProNikitaConfig ?? throw new ArgumentNullException("smsProNikitaConfig");
+            _xmlCreator = new XmlCreator(_config);
+            _httpService = webProxy != null ? new HttpService(webProxy) : new HttpService();
         }
 
         /// <summary>
@@ -42,6 +42,7 @@ namespace SmsProNikita
         /// <param name="login">Логин выдаваемый при создании аккаунта</param>
         /// <param name="password">Пароль</param>
         /// <param name="sender">Имя отправителя, отображаемое в телефоне получателя. Может состоять либо из 11 латинских букв, цифр и знаков точка и тире, либо из 14 цифр.</param>
+        /// <param name="webProxy">webProxy</param>
         /// <exception cref="ArgumentException">
         /// Логин не может быть пустым - login
         /// или
@@ -49,17 +50,15 @@ namespace SmsProNikita
         /// или
         /// Имя отправителя не может быть пустым - sender
         /// </exception>
-        public SmsProNikitaClient(string login, string password, string sender)
+        public SmsProNikitaClient(string login, string password, string sender, IWebProxy webProxy = null)
         {
             if (string.IsNullOrWhiteSpace(login)) throw new ArgumentException("Логин не может быть пустым", "login");
             if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Пароль не может быть пустым", "password");
             if (string.IsNullOrWhiteSpace(sender)) throw new ArgumentException("Имя отправителя не может быть пустым", "sender");
 
-            _login = login;
-            _password = password;
-            _sender = sender;
-
-            _httpService = new HttpService();
+            _config = new SmsProNikitaConfig(login, password, sender);
+            _xmlCreator = new XmlCreator(_config);
+            _httpService = webProxy != null ? new HttpService(webProxy) : new HttpService();
         }
 
         #region ApiMethods
@@ -84,7 +83,7 @@ namespace SmsProNikita
 
             if (string.IsNullOrWhiteSpace(id)) id = Guid.NewGuid().ToString("N").Substring(0, 11);
 
-            var xml = CreateSendSmsXml(id, text, dateTimeUTC, phone);
+            var xml = _xmlCreator.CreateSendSmsXml(id, text, dateTimeUTC, new[] { phone });
             var response = _httpService.Request(SendSmsApiUrl, xml);
             return ResponseParser.ParseSendSmsResponse(response);
         }
@@ -102,14 +101,14 @@ namespace SmsProNikita
         /// или
         /// текст сообщения не может быть пустым - text
         /// </exception>
-        public SendSmsResponse SendSms(string[] phones, string text, string id = null, DateTimeOffset dateTimeUTC = default(DateTimeOffset))
+        public SendSmsResponse SendSms(IEnumerable<string> phones, string text, string id = null, DateTimeOffset dateTimeUTC = default(DateTimeOffset))
         {
-            if (phones == null || phones.Length == 0 || phones.Length > 50) throw new ArgumentException("количество номеров в запросе не должнобыть или превышать 50", "phones");
+            if (phones == null || phones.Count() == 0 || phones.Count() > 50) throw new ArgumentException("количество номеров в запросе не должнобыть или превышать 50", "phones");
             if (string.IsNullOrWhiteSpace(text)) throw new ArgumentException("текст сообщения не может быть пустым", "text");
 
             if (string.IsNullOrWhiteSpace(id)) id = Guid.NewGuid().ToString("N").Substring(0, 11);
 
-            var xml = CreateSendSmsXml(id, text, dateTimeUTC, phones);
+            var xml = _xmlCreator.CreateSendSmsXml(id, text, dateTimeUTC, phones);
             var response = _httpService.Request(SendSmsApiUrl, xml);
             return ResponseParser.ParseSendSmsResponse(response);
         }
@@ -127,7 +126,7 @@ namespace SmsProNikita
         {
             if (string.IsNullOrWhiteSpace(id)) throw new ArgumentException("id запроса не может быть пустым", "id");
 
-            var xml = CreateDeliveryReportXml(id, phone);
+            var xml = _xmlCreator.CreateDeliveryReportXml(id, phone);
             var response = _httpService.Request(DeliveryReportApiUrl, xml);
             return ResponseParser.ParseDeliveryReportResponse(response);
         }
@@ -138,98 +137,9 @@ namespace SmsProNikita
         /// <returns> Возвращает информацию о состоянии счета и аккаунта приведенную к классу AccountInfo</returns>
         public AccountInfo GetAccountInfo()
         {
-            var xml = CreateAccountInfoXml();
+            var xml = _xmlCreator.CreateAccountInfoXml();
             var response = _httpService.Request(AccountInfoApiUrl, xml);
             return ResponseParser.ParseAccountInfoResponse(response);
-        }
-
-        #endregion
-
-
-        #region XmlGenerators
-
-        /// <summary>
-        /// Генерирует XML запроса отправки смс
-        /// </summary>
-        /// <param name="id">id запроса</param>
-        /// <param name="text">Текст сообщения</param>
-        /// <param name="time">Время отправки</param>
-        /// <param name="phones">Телефоные номера</param>
-        /// <returns></returns>
-        private string CreateSendSmsXml(string id, string text, DateTimeOffset time, params string[] phones)
-        {
-            var xdocument = new XDocument();
-            var messageElement = new XElement("message");
-            var loginElement = new XElement("login", _login);
-            var pwdElement = new XElement("pwd", _password);
-            var idElement = new XElement("id", id);
-            var senderElement = new XElement("sender", _sender);
-            var textElement = new XElement("text", text);
-            var phonesElement = new XElement("phones");
-
-            messageElement.Add(loginElement);
-            messageElement.Add(pwdElement);
-            messageElement.Add(idElement);
-            messageElement.Add(senderElement);
-            messageElement.Add(textElement);
-
-            if (time != default(DateTimeOffset) && time > new DateTimeOffset(DateTime.Now, new TimeSpan(6, 0, 0)))
-                messageElement.Add(new XElement("time", time.ToString("yyyyMMddHHmmss")));
-
-            foreach (var phone in phones)
-            {
-                phonesElement.Add(new XElement("phone", phone));
-            }
-
-            messageElement.Add(phonesElement);
-
-            xdocument.Add(messageElement);
-
-            return xdocument.ToString();
-        }
-
-        /// <summary>
-        /// Генерирует XML запроса отчета
-        /// </summary>
-        /// <param name="id">id сообщения в котором производилась отправка на определенный номер телефона </param>
-        /// <param name="phone">Номер телефона. Необязательное поле – если не указано, то возвращается отчет о всех телефонах транзакции. </param>
-        /// <returns></returns>
-        private string CreateDeliveryReportXml(string id, string phone = null)
-        {
-            var xdocument = new XDocument();
-            var drElement = new XElement("dr");
-            var loginElement = new XElement("login", _login);
-            var pwdElement = new XElement("pwd", _password);
-            var idElement = new XElement("id", id);
-
-            drElement.Add(loginElement);
-            drElement.Add(pwdElement);
-            drElement.Add(idElement);
-
-            if (!string.IsNullOrWhiteSpace(phone)) drElement.Add(new XElement("phone", phone));
-
-            xdocument.Add(drElement);
-
-            return xdocument.ToString();
-        }
-
-        /// <summary>
-        /// Генерирует XML запроса информации о состоянии счета и аккаунта
-        /// </summary>
-        /// <returns></returns>
-        private string CreateAccountInfoXml()
-        {
-            var xdocument = new XDocument();
-            var infoElement = new XElement("info");
-            var loginElement = new XElement("login", _login);
-            var pwdElement = new XElement("pwd", _password);
-
-            infoElement.Add(loginElement);
-            infoElement.Add(pwdElement);
-
-            xdocument.Add(infoElement);
-
-            return xdocument.ToString();
         }
 
         #endregion

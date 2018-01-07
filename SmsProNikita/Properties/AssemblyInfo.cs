@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("SmsProNikita")]
 [assembly: AssemblyDescription("Библиотека для работы с сервисом smspro.nikita.kg")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("D.A.Golovachev")]
 [assembly: AssemblyProduct("SmsProNikita")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]

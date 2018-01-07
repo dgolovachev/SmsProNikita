@@ -1,5 +1,8 @@
 ﻿namespace SmsProNikita.Services
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface IHttpService
     {
         /// <summary>

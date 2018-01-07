@@ -2,6 +2,10 @@
 
 namespace SmsProNikita.Exceptions
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="System.Exception" />
     public class HttpException : Exception
     {
         /// <summary>

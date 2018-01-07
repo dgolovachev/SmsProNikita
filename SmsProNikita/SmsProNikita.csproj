@@ -49,7 +49,7 @@
     <Compile Include="Services\HttpService.cs" />
     <Compile Include="Services\IHttpService.cs" />
     <Compile Include="SmsProNikitaClient.cs" />
-    <Compile Include="SmsProNikitaConfig.cs" />
+    <Compile Include="Config\SmsProNikitaConfig.cs" />
     <Compile Include="Statuses\SmsProNikitaStatuses.cs" />
     <Compile Include="Types\AccountInfo.cs" />
     <Compile Include="Types\DeliveryReport.cs" />
@@ -57,6 +57,7 @@
     <Compile Include="Types\SendSmsResponse.cs" />
     <Compile Include="Utils\IResponseParser.cs" />
     <Compile Include="Utils\ResponseParser.cs" />
+    <Compile Include="Xml\XmlCreator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
